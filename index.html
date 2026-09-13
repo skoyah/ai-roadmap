@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>AI Engineering Roadmap</title>
+<style>
+:root{
+  --paper:#EFF2F1; --surface:#fff; --ink:#13232A; --ink-mid:#3D5259; --ink-soft:#6B8087;
+  --rule:#CAD5D6; --rule-soft:#E1E8E8;
+  --go:#1E6B58; --go-tint:#E3EDE8;
+  --warn:#8C3B2E; --warn-tint:#F6E8E4;
+  --lab:#2B4A7A; --lab-tint:#E4EAF3;
+  --sand:#8A6A1F; --sand-tint:#F5EEDC;
+  --sans:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  --serif:Iowan Old Style,Palatino,Georgia,serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+p,ul,ol,h1,h2,h3,h4,table,figure{margin:0}
+code{font-family:var(--mono);font-size:.88em;background:rgba(19,35,42,.06);padding:1px 5px;border-radius:3px}
+.wrap{max-width:800px;margin:0 auto;padding:0 20px 80px}
+
+/* hero */
+.hero{padding:56px 0 32px}
+.kicker{font-size:13px;color:var(--ink-soft);font-weight:500;margin-bottom:22px}
+.kicker b{color:var(--ink-mid);font-weight:600}
+.thesis{font-size:clamp(30px,7.4vw,52px);line-height:1.06;letter-spacing:-.033em;font-weight:680;margin-bottom:20px;text-wrap:balance}
+.thesis span{color:var(--go)}
+.sub{font-family:var(--serif);font-size:17px;line-height:1.62;color:var(--ink-mid);max-width:46ch}
+.facts{display:flex;flex-wrap:wrap;margin-top:30px;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.fact{flex:1 1 100px;padding:14px 16px 14px 0}
+.fact+.fact{padding-left:16px;border-left:1px solid var(--rule-soft)}
+.fact dt{font-size:12px;color:var(--ink-soft);margin-bottom:3px}
+.fact dd{font-size:17px;font-weight:620;letter-spacing:-.01em;margin:0}
+
+/* tracker */
+.tracker{position:sticky;top:0;z-index:30;background:rgba(239,242,241,.94);backdrop-filter:blur(10px);border-bottom:1px solid var(--rule);margin:0 -20px 12px;padding:11px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.bar{flex:1 1 120px;height:5px;background:var(--rule-soft);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--go);transition:width .35s cubic-bezier(.4,0,.2,1)}
+.tally{font-family:var(--mono);font-size:12px;color:var(--ink-mid);white-space:nowrap}
+.seg{display:flex;border:1px solid var(--rule);border-radius:99px;overflow:hidden;background:var(--surface)}
+.seg button{border:none;background:none;font-family:var(--sans);font-size:12.5px;color:var(--ink-soft);padding:5px 12px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--ink);color:#fff}
+.reset{background:none;border:none;color:var(--ink-soft);font-size:12px;cursor:pointer;text-decoration:underline;text-underline-offset:3px;font-family:var(--sans)}
+.reset:hover{color:var(--warn)}
+
+/* spine */
+.spine{position:relative;padding-left:34px}
+.spine::before{content:"";position:absolute;left:8px;top:12px;bottom:34px;border-left:2px solid var(--rule)}
+.spine.loose::before{border-left-style:dashed}
+.band-note{margin:30px 0 14px;padding-left:34px;font-size:13px;color:var(--ink-soft);font-style:italic;font-family:var(--serif)}
+.phase{position:relative;margin-bottom:14px}
+.node{position:absolute;left:-34px;top:20px;width:18px;height:18px;border-radius:50%;background:var(--paper);border:2px solid var(--rule);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--ink-soft);font-family:var(--mono);transition:all .25s}
+.phase.done .node{background:var(--go);border-color:var(--go);color:#fff}
+.card{background:var(--surface);border:1px solid var(--rule-soft);border-radius:3px}
+.phase.done .card{border-color:var(--go-tint)}
+.head{width:100%;text-align:left;background:none;border:none;padding:18px 20px;cursor:pointer;font-family:var(--sans);color:inherit;display:block}
+.head:focus-visible{outline:2px solid var(--go);outline-offset:-2px}
+.meta{font-size:12px;color:var(--ink-soft);margin-bottom:5px;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.tag{color:var(--warn);background:var(--warn-tint);padding:1px 7px;border-radius:2px;font-size:11px;font-weight:600}
+.tag.core{color:var(--go);background:var(--go-tint)}
+.title-row{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.title{font-size:20px;font-weight:640;letter-spacing:-.018em;line-height:1.25}
+.chev{color:var(--ink-soft);font-size:13px;flex-shrink:0;transition:transform .25s}
+.phase.expanded .chev{transform:rotate(180deg)}
+.body{display:none;padding:0 20px 22px}
+.phase.expanded .body{display:block}
+.body>*+*{margin-top:14px}
+h4.sec{font-size:12px;font-weight:680;color:var(--ink-soft);margin-top:24px!important;padding-top:14px;border-top:1px solid var(--rule-soft)}
+h4.sec.practice{color:var(--lab)}
+.body p{font-size:15.5px;color:var(--ink-mid)}
+.body strong{color:var(--ink);font-weight:620}
+.body ul{list-style:none;padding:0}
+.body ul li{position:relative;padding-left:17px;font-size:15.5px;color:var(--ink-mid)}
+.body ul li+li{margin-top:9px}
+.body ul li::before{content:"";position:absolute;left:2px;top:10px;width:5px;height:1.5px;background:var(--rule)}
+.analogy{background:var(--go-tint);border-left:3px solid var(--go);padding:13px 16px;font-family:var(--serif);font-size:15.5px;line-height:1.6;color:#1B3B33}
+.analogy b{font-style:italic;font-weight:400;color:var(--go)}
+.caution{background:var(--warn-tint);border-left:3px solid var(--warn);padding:13px 16px;font-size:15px;color:#5C2A20}
+.res{list-style:none;padding:0}
+.res li{display:flex;gap:10px;font-size:14.5px;color:var(--ink-mid)}
+.res li+li{margin-top:10px}
+.res .ico{flex-shrink:0;width:16px;font-size:11px;color:var(--ink-soft);font-family:var(--mono);padding-top:3px}
+.res b{color:var(--ink);font-weight:620}
+a{color:var(--go)}
+.gate{display:flex;gap:10px;background:var(--paper);padding:13px 15px;border-radius:3px;font-size:15px;color:var(--ink-mid)}
+.gate .mark{color:var(--go);font-weight:700;flex-shrink:0}
+
+/* checks */
+.checks{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px!important}
+.chk{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--rule);background:var(--surface);padding:8px 14px 8px 11px;border-radius:99px;cursor:pointer;font-size:13.5px;color:var(--ink-mid);user-select:none;transition:all .18s}
+.chk:hover{border-color:var(--ink-soft)}
+.chk input{position:absolute;opacity:0;width:0;height:0}
+.box{width:15px;height:15px;border:1.5px solid var(--rule);border-radius:3px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;color:transparent;transition:all .18s}
+.chk.on{background:var(--go-tint);border-color:var(--go);color:var(--go);font-weight:550}
+.chk.on .box{background:var(--go);border-color:var(--go);color:#fff}
+.chk input:focus-visible+.box{outline:2px solid var(--go);outline-offset:2px}
+
+/* quiz */
+.quiz{background:var(--sand-tint);border-radius:3px;padding:16px 18px}
+.quiz+.quiz{margin-top:10px}
+.q{font-size:15.5px;font-weight:600;color:#3E2F0F;margin-bottom:11px}
+.opts{display:flex;flex-direction:column;gap:6px}
+.opt{text-align:left;background:rgba(255,255,255,.7);border:1px solid #E3D6B4;border-radius:3px;padding:9px 12px;font-size:14.5px;font-family:var(--sans);color:#4A3C1C;cursor:pointer;line-height:1.4;transition:all .15s}
+.opt:hover:not(:disabled){border-color:var(--sand)}
+.opt:disabled{cursor:default}
+.opt.right{background:var(--go-tint);border-color:var(--go);color:#14453A;font-weight:560}
+.opt.wrong{background:var(--warn-tint);border-color:var(--warn);color:#5C2A20}
+.why{margin-top:11px;font-size:14.5px;color:#4A3C1C;font-family:var(--serif);line-height:1.55;display:none}
+.why.show{display:block}
+
+/* lab */
+.lab{background:var(--lab-tint);border:1px solid #C9D5E8;border-radius:3px;padding:18px}
+.lab h5{font-size:12px;font-weight:680;color:var(--lab);margin:0 0 3px}
+.lab .desc{font-size:14.5px;color:#33445F;margin-bottom:14px}
+.lab label{font-size:13px;color:#33445F;display:block;margin-bottom:6px}
+.lab input[type=text]{width:100%;padding:9px 11px;border:1px solid #C9D5E8;border-radius:3px;font-family:var(--sans);font-size:14.5px;background:#fff;color:var(--ink)}
+.lab input[type=range]{width:100%;accent-color:var(--lab)}
+.btn{background:var(--lab);color:#fff;border:none;border-radius:3px;padding:8px 15px;font-size:13.5px;font-family:var(--sans);cursor:pointer}
+.btn.ghost{background:#fff;color:var(--lab);border:1px solid #C9D5E8}
+.btn:hover{opacity:.9}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.pill{border:1px solid #C9D5E8;background:#fff;color:#33445F;border-radius:99px;padding:5px 12px;font-size:12.5px;cursor:pointer;font-family:var(--sans)}
+.pill[aria-pressed=true]{background:var(--lab);color:#fff;border-color:var(--lab)}
+.tokbar{display:flex;align-items:center;gap:8px;margin-bottom:5px;font-size:13px}
+.tokbar .w{font-family:var(--mono);width:104px;flex-shrink:0;color:#33445F;font-size:12.5px}
+.tokbar .t{flex:1;height:16px;background:#fff;border-radius:2px;overflow:hidden}
+.tokbar .t i{display:block;height:100%;background:var(--lab);transition:width .3s}
+.tokbar .p{font-family:var(--mono);font-size:11.5px;color:#5A6B85;width:44px;text-align:right}
+.out{background:#fff;border-radius:3px;padding:11px 13px;font-family:var(--mono);font-size:12.5px;color:#33445F;line-height:1.7;margin-top:12px;word-break:break-word}
+.hit{background:#fff;border-radius:3px;padding:9px 12px;font-size:13.5px;color:#33445F;margin-top:7px;border-left:3px solid var(--lab)}
+.hit .sc{font-family:var(--mono);font-size:11px;color:#7A889E;float:right}
+.verdict{margin-top:13px;padding:12px 14px;border-radius:3px;font-size:14.5px;font-weight:560;background:#fff;color:#33445F;border-left:3px solid var(--lab)}
+.verdict.bad{background:var(--warn-tint);color:#5C2A20;border-left-color:var(--warn)}
+.verdict.good{background:var(--go-tint);color:#14453A;border-left-color:var(--go)}
+.tog{display:flex;align-items:flex-start;gap:9px;font-size:14.5px;color:#33445F;cursor:pointer;padding:7px 0}
+.tog input{margin-top:3px;accent-color:var(--lab);flex-shrink:0}
+
+/* practice steps */
+.steps{list-style:none;padding:0;counter-reset:s}
+.steps li{counter-increment:s;position:relative;padding-left:30px;font-size:15.5px;color:var(--ink-mid)}
+.steps li+li{margin-top:11px}
+.steps li::before{content:counter(s);position:absolute;left:0;top:0;font-family:var(--mono);font-size:11px;color:var(--lab);background:var(--lab-tint);width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600}
+.steps li::after{display:none}
+
+/* notes */
+.notes textarea{width:100%;min-height:74px;border:1px solid var(--rule);border-radius:3px;padding:10px 12px;font-family:var(--sans);font-size:14.5px;color:var(--ink);background:var(--paper);resize:vertical;line-height:1.5}
+.notes textarea:focus{outline:2px solid var(--go);outline-offset:-1px;background:#fff}
+
+/* blocks */
+.tbl{width:100%;border-collapse:collapse;font-size:14.5px}
+.tbl th{text-align:left;font-size:12px;color:var(--ink-soft);font-weight:600;padding:0 10px 7px 0;border-bottom:1px solid var(--rule)}
+.tbl td{padding:10px 10px 10px 0;border-bottom:1px solid var(--rule-soft);color:var(--ink-mid);vertical-align:top}
+.tbl td:first-child{color:var(--ink);font-weight:600;white-space:nowrap}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.block{margin-top:44px}
+.block>h2{font-size:24px;font-weight:660;letter-spacing:-.022em;margin-bottom:6px}
+.block>.lede{font-size:15px;color:var(--ink-soft);margin-bottom:18px}
+.panel{background:var(--surface);border:1px solid var(--rule-soft);border-radius:3px;padding:20px}
+.traps{counter-reset:t;list-style:none;padding:0}
+.traps li{counter-increment:t;position:relative;padding-left:32px;font-size:15.5px;color:var(--ink-mid)}
+.traps li+li{margin-top:15px;padding-top:15px;border-top:1px solid var(--rule-soft)}
+.traps li::before{content:counter(t);position:absolute;left:0;top:1px;font-family:var(--mono);font-size:12px;color:var(--warn);background:var(--warn-tint);width:21px;height:21px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600}
+.traps li+li::before{top:16px}
+.traps b{color:var(--ink);font-weight:630}
+.feed{list-style:none;padding:0}
+.feed li{font-size:15px;color:var(--ink-mid)}
+.feed li+li{margin-top:12px;padding-top:12px;border-top:1px solid var(--rule-soft)}
+.feed b{color:var(--ink);font-weight:620;display:block;font-size:15.5px}
+details.appendix{margin-top:44px}
+details.appendix summary{cursor:pointer;font-size:15px;color:var(--ink-mid);font-weight:600;padding:14px 0;border-top:1px solid var(--rule);list-style:none}
+details.appendix summary::-webkit-details-marker{display:none}
+details.appendix summary::before{content:"+ ";color:var(--ink-soft);font-family:var(--mono)}
+details.appendix[open] summary::before{content:"– "}
+details.appendix .panel{margin-top:4px}
+details.appendix p+p{margin-top:12px}
+details.appendix p{font-size:15px;color:var(--ink-mid)}
+.foot{margin-top:50px;padding-top:18px;border-top:1px solid var(--rule);font-size:13px;color:var(--ink-soft)}
+body.only-theory [data-kind=practice]{display:none}
+body.only-practice [data-kind=theory]{display:none}
+@media(max-width:560px){
+  .wrap{padding:0 15px 60px}
+  .tracker{margin:0 -15px 12px;padding:10px 15px}
+  .spine{padding-left:26px}.spine::before{left:5px}
+  .node{left:-26px;width:14px;height:14px;font-size:8px;top:21px}
+  .band-note{padding-left:26px}
+  .head,.body{padding-left:15px;padding-right:15px}
+  .tokbar .w{width:78px}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <p class="kicker">A learning roadmap for <b>Joao</b> · PHP &amp; JS → AI enablement engineer</p>
+  <h1 class="thesis">The job is building reliable systems out of an <span>unreliable component.</span></h1>
+  <p class="sub">Everything below is a specialization of that sentence. You will not train models. Your instincts about queues, retries, idempotency, permissions and logging matter more here than they did in CRUD work — not less.</p>
+  <dl class="facts">
+    <div class="fact"><dt>Phases</dt><dd>9</dd></div>
+    <div class="fact"><dt>Labs</dt><dd>4 hands-on</dd></div>
+    <div class="fact"><dt>Pace</dt><dd>5–8 hrs / wk</dd></div>
+    <div class="fact"><dt>Horizon</dt><dd>~6 months</dd></div>
+  </dl>
+</header>
+
+<div class="tracker">
+  <div class="bar"><i id="fill"></i></div>
+  <span class="tally" id="tally">0 / 0</span>
+  <div class="seg" id="seg">
+    <button data-view="all" aria-pressed="true">Both</button>
+    <button data-view="theory" aria-pressed="false">Theory</button>
+    <button data-view="practice" aria-pressed="false">Practice</button>
+  </div>
+  <button class="reset" id="reset">Reset</button>
+</div>
+
+<p class="band-note">Phases 0–4 are sequential. Don't skip ahead — the spine is solid here for a reason.</p>
+<div class="spine" id="band1"></div>
+<p class="band-note">From here the line loosens. Phases 5–8 run alongside real work, continuously, not in order.</p>
+<div class="spine loose" id="band2"></div>
+
+<section class="block">
+  <h2>The first 90 days</h2>
+  <p class="lede">Concrete outputs, not reading targets.</p>
+  <div class="panel scroll">
+    <table class="tbl">
+      <thead><tr><th>Weeks</th><th>Focus</th><th>What exists at the end</th></tr></thead>
+      <tbody>
+        <tr><td>1–2</td><td>Phase 0</td><td>Karpathy deep-dive watched; the sampling lab actually understood, not just clicked</td></tr>
+        <tr><td>3–4</td><td>Phase 1</td><td>One production-shaped prompt plus a 15-row eval sheet</td></tr>
+        <tr><td>5–7</td><td>Phase 2</td><td>Tool-using service in TypeScript hitting two real internal APIs</td></tr>
+        <tr><td>8–9</td><td>Phase 3</td><td>RAG over internal docs — pgvector, hybrid search, measured before/after</td></tr>
+        <tr><td>10</td><td>Phase 3</td><td>One working MCP server for an internal system</td></tr>
+        <tr><td>11–12</td><td>Phase 4</td><td>One n8n workflow live with a real non-engineering user, plus a hand-written agent loop</td></tr>
+        <tr><td>Throughout</td><td>5 &amp; 8</td><td>Tracing wired in from week 5; trifecta review on everything you ship</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:14.5px;color:var(--ink-soft);margin-top:16px">Months 4–6: evals into CI, Phase 6 in one repo, and the Phase 7 platform work begins.</p>
+  </div>
+</section>
+
+<section class="block">
+  <h2>Seven ways this goes wrong</h2>
+  <p class="lede">Each one is common enough to be predictable.</p>
+  <div class="panel"><ol class="traps">
+    <li><b>Framework shopping.</b> Learning LangGraph before you've written a raw agent loop means you'll spend your time debugging the framework instead of the problem.</li>
+    <li><b>Skipping evals.</b> You'll ship something that demos beautifully and fails in week three, with no idea why — and you'll be tempted to fix it by editing the prompt at random.</li>
+    <li><b>Agents where a workflow would do.</b> More autonomy isn't more sophistication. It's more variance and more cost.</li>
+    <li><b>Chasing model releases.</b> The models improve on their own. Your context pipeline, evals and guardrails are what compound.</li>
+    <li><b>Measuring the wrong thing.</b> Any metric that rewards volume of AI-generated output will reliably produce volume of AI-generated output.</li>
+    <li><b>Treating governance as later.</b> Retrofitting audit trails onto forty departmental automations is a far worse job than paving the road first.</li>
+    <li><b>Learning alone.</b> Your advantage over an AI-native new hire is that you know your company's systems, data and politics. Pair with the people you're enabling.</li>
+  </ol></div>
+</section>
+
+<section class="block">
+  <h2>Staying current without drowning</h2>
+  <p class="lede">Two hours a week. Not more. Building beats reading once you're past Phase 1.</p>
+  <div class="panel"><ul class="feed">
+    <li><b>Simon Willison's blog</b>Near-daily. The most reliable running commentary in the field, especially on security. <a href="https://simonwillison.net">simonwillison.net</a></li>
+    <li><b>Anthropic Engineering &amp; OpenAI's guides</b>Vendor-flavoured, but consistently the best primary sources on agent design.</li>
+    <li><b>Latent Space</b>Podcast and newsletter. The field's engineering conversation of record.</li>
+    <li><b>AI Engineer conference talks</b>A few hours a quarter on YouTube, filtered for what practitioners actually shipped.</li>
+    <li><b>Thoughtworks Technology Radar</b>Twice a year, healthily skeptical. A good antidote to hype.</li>
+    <li><b>roadmap.sh/ai-engineer</b>Useful mainly for spotting gaps in your own map.</li>
+  </ul></div>
+</section>
+
+<details class="appendix">
+  <summary>How this roadmap was built, and what the review pass changed</summary>
+  <div class="panel">
+    <p><b>Drafting panel:</b> an LLM systems engineer, an internal-platform and enablement lead, a developer-experience engineer focused on AI in the SDLC, an AI security specialist, and a learning designer.</p>
+    <p><b>Review panel:</b> a staff-level AI engineer, a skeptic, and an adoption/change-management lead.</p>
+    <ul class="feed" style="margin-top:14px">
+      <li><b>Cut all model training and math prerequisites.</b> Not your job, and the most common way this kind of roadmap gets bloated. Fine-tuning is deliberately absent — with modern context windows and good retrieval it's rarely the right first answer.</li>
+      <li><b>Cut "learn Python properly" to "learn to read Python."</b> Contested by one reviewer; the majority view was that TypeScript is where your ecosystem leverage is.</li>
+      <li><b>Promoted evals</b> from a late-stage topic to something starting in week three that never ends. The first draft had it at the end — precisely how everyone gets it wrong.</li>
+      <li><b>Promoted security</b> out of an appendix. Since your team will hand agent-building tools to non-engineers, the lethal trifecta has to be a design constraint from day one.</li>
+      <li><b>Made the workflow-before-agent bias explicit,</b> with a written comparison as a deliverable.</li>
+      <li><b>Added the compaction and prompt-caching point</b> in Phase 3 — recent, counterintuitive, and it saves real money.</li>
+      <li><b>Added measurement and adoption</b> to Phases 6 and 7. The reviewer's note: "the technical parts of this job are the easy half; the roadmap was 90% technical and that ratio is a lie."</li>
+      <li><b>Flagged that spec-driven tooling is strongest on greenfield work.</b> Going into an existing PHP codebase, adopt progressively and expect friction.</li>
+    </ul>
+  </div>
+</details>
+
+<p class="foot">Progress, quiz answers and notes are saved in this browser only — nothing leaves the page. The labs are simplified simulations built to give you intuition, not production implementations. Resources without links are named exactly; search the title.</p>
+</div>
+
+<script>
+/* ============ data ============ */
+const PHASES=[
+{band:1,n:"0",time:"~2 weeks",tag:"Non-negotiable",
+ title:"Fundamentals: what the thing actually is",
+ intro:"Most people skip this and spend the next two years confused about why their prompt \"stopped working.\"",
+ concepts:[
+  "<strong>Tokens and next-token prediction.</strong> The model doesn't see words. It sees token IDs, and produces one at a time by sampling from a probability distribution.",
+  "<strong>The context window is the whole world.</strong> No state between calls. Every request is a cold start.",
+  "<strong>Temperature and sampling.</strong> Same input ≠ same output. This breaks every testing assumption you currently hold.",
+  "<strong>Embeddings.</strong> Text mapped to numbers where distance means semantic similarity.",
+  "<strong>Why models hallucinate.</strong> They optimize for plausible continuation, not truth. Truth is a side effect of training data, not a design goal.",
+  "<strong>Pretraining vs. post-training,</strong> at a high level: why a model has a personality, why it refuses things, why two models differ on identical prompts."],
+ analogies:[
+  "<b>Next-token prediction is</b> <code>array_shift()</code> on an infinitely long, probabilistically generated list. Each step it reads everything so far and guesses the next chunk. No plan, no goal, no memory beyond what's in front of it.",
+  "<b>The context window is</b> a PHP request in the pre-session era. Nothing persists. \"Memory\" in a chatbot is you re-sending the transcript every single time — the illusion is built in your application layer, not in the model.",
+  "<b>Embeddings are</b> geocoding for meaning. \"Cancel my order\" and \"I want a refund\" land in the same neighbourhood with zero shared words. This is why <code>LIKE '%refund%'</code> was never good enough."],
+ lab:"sampling",
+ res:[["▶","<b>Andrej Karpathy — \"Deep Dive into LLMs like ChatGPT\"</b> (YouTube, ~3.5h). The single highest-value item on this list. Watch it in chunks. His \"Intro to Large Language Models\" is the 1-hour express version."],
+      ["▶","<b>3Blue1Brown — Neural Networks series,</b> the transformers and attention chapters."],
+      ["◆","<b>Jay Alammar — \"The Illustrated Transformer.\"</b> The classic explainer."],
+      ["■","<b>\"Hands-On Large Language Models\"</b> — Alammar &amp; Grootendorst. Chapters 1–3."]],
+ steps:["Write a CLI script (Node or PHP) that hits an LLM API and prints the response.",
+        "Run the same prompt ten times at default temperature. Diff the outputs.",
+        "Set <code>temperature: 0</code> and run ten more. Diff again — note that it's more stable, not guaranteed identical.",
+        "Print the token count and cost of each call. Get used to seeing the meter run."],
+ gate:"You can explain to a product manager, without jargon, why the AI gave a different answer on Tuesday than on Monday — and why \"just tell it to be accurate\" doesn't fix hallucination.",
+ quiz:[
+  {q:"Your prompt worked yesterday and gives a different answer today. Nothing in your code changed. Most likely explanation?",
+   o:["The model was retrained overnight","Output is sampled from a probability distribution, so variation is the default","Your context window overflowed","The API returned a cached response"],a:1,
+   why:"Unless you pin temperature to 0 — and even then it isn't a hard guarantee — every generation draws from a distribution. Variation is the normal operating mode, not a bug to hunt."},
+  {q:"A chatbot 'remembers' something you said ten messages ago. Where does that memory actually live?",
+   o:["In the model's weights","In a hidden session on the provider's server","In your application, which re-sends the transcript on every call","In the embedding index"],a:2,
+   why:"The model is stateless between calls. Conversation memory is an illusion your application maintains by resending history — which is also why long chats get expensive."}]},
+
+{band:1,n:"1",time:"~2 weeks",
+ title:"Prompting as an engineering discipline",
+ intro:"Prompt engineering as a job title has basically evaporated, absorbed into everyone's role. But the underlying skill — specifying a task precisely enough for a literal-minded system — is table stakes. Learn it properly, then stop obsessing over it.",
+ concepts:[
+  "<strong>System prompt vs. user message vs. assistant turn,</strong> and what each is actually for.",
+  "<strong>Structure beats cleverness:</strong> delimiters (XML tags work particularly well with Claude), explicit output format, explicit constraints, explicit \"if you don't know, say so.\"",
+  "<strong>Few-shot examples.</strong> Usually worth more than three paragraphs of instruction.",
+  "<strong>Chain of thought.</strong> Letting the model work out loud — when it helps, when it's wasted tokens, and how reasoning models changed the calculus.",
+  "<strong>Prompt as interface contract.</strong> Versioned, in source control, with a changelog.",
+  "<strong>Model differences.</strong> The same prompt behaves differently across Claude, GPT, Gemini and open models. Write portably, and know when to stop trying."],
+ analogies:["<b>Few-shot prompting is</b> not documentation, it's a test fixture. You're not explaining the shape you want — you're showing it."],
+ res:[["◆","<b>Anthropic's prompt engineering docs</b> — the most practically useful vendor documentation available. <a href=\"https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/overview\">docs.claude.com</a>"],
+      ["◆","<b>The OpenAI Cookbook</b> — a pattern library worth skimming end to end."],
+      ["■","<b>\"Prompt Engineering for LLMs\"</b> — Berryman &amp; Ziegler, for depth on why the techniques work."]],
+ steps:["Pick one real repetitive task from your current job — release notes from a git log, or triaging bug reports.",
+        "Write version A of the prompt. Then write version B with a different structure.",
+        "Collect 15 real inputs and hand-write the output you'd accept for each.",
+        "Run both versions against all 15. Count. You have just built your first eval — Phase 5 starts here.",
+        "Commit the winning prompt to a repo with a one-line changelog. Never edit it in a web playground again."],
+ gate:"You can turn a vague request (\"make the AI summarize support tickets\") into a prompt with defined inputs, a defined output schema and defined failure behaviour — and tell whether version B beats version A with evidence rather than vibes.",
+ quiz:[
+  {q:"You need the model to sort tickets into five categories and it keeps confusing two of them. Which change most likely helps?",
+   o:["Adding \"be accurate and careful\" to the system prompt","Six labelled examples covering exactly the confusing boundary","Raising temperature so it considers more options","Making the prompt longer and more polite"],a:1,
+   why:"Exhortation does almost nothing. Examples that sit on the decision boundary do a lot — they define the boundary in a way prose can't."},
+  {q:"Where should a production prompt live?",
+   o:["In the vendor's web playground","In version control, with a changelog, treated like code","Pasted into the deploy script","Wherever whoever wrote it left it"],a:1,
+   why:"A prompt is behaviour. Untracked behaviour changes are how you lose a week to \"it used to work.\" A database-backed prompt is fine too — as long as it's versioned and diffable."}]},
+
+{band:1,n:"2",time:"~3 weeks",
+ title:"The API layer: your existing skills, applied",
+ intro:"This is where your background starts paying rent.",
+ concepts:[
+  "<strong>Calling the API from code:</strong> auth, streaming, token counting, cost per call, rate limits, retries with backoff. You've done all of this against payment gateways.",
+  "<strong>Structured output.</strong> Forcing valid JSON against a schema instead of parsing prose.",
+  "<strong>Tool use / function calling.</strong> You describe your functions; the model picks which to call with what arguments; your code executes and returns the result.",
+  "<strong>Prompt caching.</strong> Cached prefixes are dramatically cheaper and faster, with real architectural consequences.",
+  "<strong>Model selection.</strong> Big/slow/expensive vs. small/fast/cheap, and routing between them."],
+ analogies:[
+  "<b>Structured output is</b> the difference between scraping HTML and consuming a typed REST endpoint.",
+  "<b>Tool use is not</b> the model calling your code. The model is <i>writing a webhook payload</i> and handing it to you. You are always the one who executes. That distinction is the entire security model — internalize it now, it returns in Phase 8."],
+ extra:{t:"Language strategy — read this carefully",h:"<p>Your PHP/JS background is fine, with two adjustments.</p><ul><li><strong>TypeScript over plain JS.</strong> The best SDKs are TS-first (Vercel AI SDK, Mastra, LangGraph JS), and structured output with Zod schemas is an excellent developer experience. If you only know JS, budget a week.</li><li><strong>Enough Python to read, not write.</strong> Most papers, notebooks and reference implementations are Python. You should be able to read a snippet and port the idea.</li><li><strong>PHP is not a dead end.</strong> LLPhant, Prism for Laravel, Symfony's AI components, Neuron — check their current state before committing. Your company has PHP systems the AI needs to reach, and being the one who can wire agents into them is leverage. But do your <i>learning</i> in TS, where the docs are.</li></ul>"},
+ res:[["◆","<b>Vercel AI SDK docs</b> — the fastest path from zero to working TypeScript AI code."],
+      ["◆","<b>Anthropic's tool use docs</b> and <b>OpenAI's function calling guide.</b> Read both; note where they differ."],
+      ["▶","<b>DeepLearning.AI short courses</b> — free, ~1h each. Pick tool use, structured output and evaluation."]],
+ steps:["Define three tools that hit real endpoints: a database lookup, an internal API, a calculator.",
+        "Ask a question that needs two of them in sequence. Watch the model chain them.",
+        "Now ask something ambiguous and watch it pick wrong. Log the tool call it made.",
+        "Add schema validation on every tool result before it goes back to the model.",
+        "Add a cost counter and a retry-with-backoff wrapper. Break the network on purpose and confirm it recovers."],
+ gate:"You can build a service that takes a natural-language request, calls the right internal function and returns validated JSON — with cost logging, retry handling and a fallback when the model returns garbage.",
+ quiz:[
+  {q:"The model returns a tool call. Who executes it?",
+   o:["The model provider's runtime","Your code, always","The SDK, automatically and invisibly","Depends on the model"],a:1,
+   why:"The model only emits a structured request. Your code decides whether to honour it. Every permission boundary you'll ever build sits at that line."},
+  {q:"Your endpoint must return JSON your frontend can consume. Best approach?",
+   o:["Ask nicely for JSON and regex whatever comes back","Use structured output constrained to a schema","Post-process the prose with a second model call","Set temperature to 0 and hope"],a:1,
+   why:"Schema-constrained output moves the guarantee from persuasion to mechanism. Regex-on-prose works until the day it doesn't, usually in production."}]},
+
+{band:1,n:"3",time:"~4 weeks",
+ title:"Context engineering and retrieval",
+ intro:"The field's centre of gravity moved here. Prompt engineering is how you talk to one model call; context engineering is designing the pipeline that decides which tokens the model sees on every call. Most production failures now are context failures — wrong documents retrieved, history stuffed until it collapsed, tool definitions missing.",
+ concepts:[
+  "<strong>RAG.</strong> Retrieve relevant chunks, put them in the prompt, let the model answer from them.",
+  "<strong>The pipeline:</strong> chunking → embedding → vector store → retrieval → reranking → assembly. Every stage can lose the right answer.",
+  "<strong>Vector databases.</strong> Start with pgvector — a Postgres extension, so it's a database you already know with an extra index type. Don't adopt a specialist vector DB until Postgres actually hurts.",
+  "<strong>Hybrid search.</strong> Pure semantic search misses exact matches — error codes, SKUs, names. Combining with keyword/BM25 is the most common cheap win.",
+  "<strong>The four moves on context:</strong> write, select, compress, isolate.",
+  "<strong>Compaction is not free.</strong> Under prompt caching, summarizing rewrites the cached prefix — so you pay to recompute what you were trying to save.",
+  "<strong>MCP (Model Context Protocol).</strong> An open standard for exposing tools and data to any AI client. Likely a core deliverable for your team."],
+ analogies:[
+  "<b>RAG is</b> an open-book exam. The model is the student; you are the librarian deciding which pages land on the desk. Most bad RAG is a librarian problem, not a student problem.",
+  "<b>Karpathy's framing:</b> the model is the CPU, the context window is RAM, and you are writing the operating system — deciding what gets paged in and out.",
+  "<b>MCP is</b> USB-C for AI tooling. One server, and every compatible client can use it."],
+ lab:"retrieval",
+ res:[["◆","<b>Anthropic Engineering — \"Effective context engineering for AI agents.\"</b> Read it twice."],
+      ["◆","<b>LangChain's context engineering write-up</b> — the write / select / compress / isolate framing."],
+      ["◆","<b>The MCP specification and docs,</b> then build a server — it's a couple of hours. <a href=\"https://modelcontextprotocol.io\">modelcontextprotocol.io</a>"],
+      ["■","<b>\"AI Engineering\" — Chip Huyen</b> (O'Reilly, 2025). The best single book for this roadmap. Read it across Phases 3–5."]],
+ steps:["Index a real corpus your company has — internal docs, a Confluence export, your own codebase.",
+        "Write 20 questions you know the answers to. Run them. Record how many retrieve the right chunk.",
+        "Deliberately find three questions where the answer exists but retrieval misses it.",
+        "Add keyword search alongside the vector search, merge the results, re-run. Compare the numbers.",
+        "Build one MCP server exposing a single internal read-only tool, and point a client at it."],
+ gate:"You can diagnose a wrong answer and say with confidence whether it was a retrieval failure, an assembly failure or a model failure — and you have logs that prove it.",
+ quiz:[
+  {q:"Users search for error code E-4471. Semantic search returns unrelated pages. Why?",
+   o:["The chunks are too large","Embeddings encode meaning, and a rare literal string has almost no meaning to encode","The context window is too small","The vector index needs rebuilding"],a:1,
+   why:"This is the canonical case for hybrid search. Identifiers, SKUs and proper nouns need lexical matching; meaning-space similarity can't help you find a string it never learned."},
+  {q:"To save money you summarize old conversation turns. Under prompt caching, this…",
+   o:["Always reduces cost","Rewrites the cached prefix, so you pay to recompute everything you were trying to save","Improves the model's recall","Has no effect on cost either way"],a:1,
+   why:"The cache keys on an unchanged prefix. Compaction changes it. Compact when you hit a real constraint, not as a default habit."}]},
+
+{band:1,n:"4",time:"~4 weeks",tag:"Core to your mandate",core:true,
+ title:"Workflows and agents",
+ intro:"A workflow is LLM calls orchestrated through predefined code paths you wrote — deterministic control flow, non-deterministic steps. An agent decides its own sequence of tool calls in a loop until it judges the task done. Start with workflows. Always. Add autonomy only when a workflow provably can't do the job.",
+ analogies:["<b>A workflow is</b> a cron job with a defined DAG. <b>An agent is</b> a background worker with judgment and a company credit card. You wouldn't hand the second to a junior on day one; don't hand it to a model either."],
+ table:{h:["Pattern","What it is","Where you'll use it"],r:[
+  ["Prompt chaining","Output of step 1 feeds step 2","Draft PRD → critique → revise"],
+  ["Routing","Classify, then dispatch to a specialist prompt","Support ticket triage"],
+  ["Parallelization","Same input, several simultaneous calls, aggregate","Multi-perspective code review"],
+  ["Orchestrator–workers","A lead model decomposes and delegates","Multi-file refactors"],
+  ["Evaluator–optimizer","One generates, another critiques, loop","Content that must hit a bar"]]},
+ concepts:[
+  "<strong>The agent loop itself.</strong> Write one by hand — <code>while (!done) { call model; execute tool; append result }</code> — before touching a framework. About forty lines, and it demystifies everything.",
+  "<strong>Human-in-the-loop gates.</strong> Where a human must approve before the agent acts. As much a product decision as a technical one.",
+  "<strong>Durability and idempotency.</strong> Agents crash mid-run. Checkpointing and resumability. Your queue-and-worker experience transfers directly.",
+  "<strong>Subagents and context isolation.</strong> Splitting across agents with clean contexts often beats one agent with a huge one.",
+  "<strong>Tool design discipline.</strong> Too many tools measurably degrades tool selection. Design for the model's ergonomics, not your API's convenience."],
+ extra:{t:"Tooling to touch — pick, don't collect",h:"<ul><li><strong>Code-first:</strong> Vercel AI SDK (simplest), LangGraph (graph-based, mature), Mastra (TS-native). One is enough.</li><li><strong>Visual, for the non-engineering side:</strong> n8n is the strongest fit for your mandate — self-hostable, AI-native, with RBAC, credential management, audit logs and human-in-the-loop gates. Learn it properly; you'll likely operate it as an internal platform.</li><li><strong>Coding agents:</strong> Claude Code, Cursor, Copilot agents, Codex. Use at least two, so you can tell tool from technique.</li></ul>"},
+ lab:"decide",
+ res:[["◆","<b>Anthropic — \"Building Effective Agents.\"</b> The foundational text. Short. Read it three times over your first year."],
+      ["◆","<b>Anthropic — \"Effective harnesses for long-running agents.\"</b>"],
+      ["◆","<b>OpenAI — \"A practical guide to building agents\"</b> (PDF)."],
+      ["◆","<b>The ReAct paper</b> (Yao et al., 2022) — the reasoning-and-acting loop everything descends from."],
+      ["♪","<b>Latent Space</b> — the field's engineering conversation of record."]],
+ steps:["Hand-write an agent loop in ~40 lines. No framework. Three tools, a stop condition, a turn limit.",
+        "Ship a workflow in n8n for a real internal process: form → classify → enrich → write to system of record → notify.",
+        "Ship an agent for something a workflow can't do — exploring a codebase to answer \"where is X implemented and what depends on it.\"",
+        "Add a human approval gate to whichever one writes to a real system.",
+        "Write a one-page comparison: cost, latency, reliability, debuggability. That document becomes your team's first internal standard."],
+ gate:"Someone proposes \"let's make it an agent\" and you can say specifically whether that's the right call — and propose the workflow version when it isn't.",
+ quiz:[
+  {q:"A task has five known steps that always run in the same order. Build it as…",
+   o:["An agent — it's more capable","A workflow — you already know the control flow, so write it","Three agents in parallel","One very large prompt"],a:1,
+   why:"If you know the steps, encoding them in code is cheaper, faster, testable and debuggable. Autonomy is a cost you pay when you genuinely don't know the path in advance."},
+  {q:"Your agent has 60 tools and keeps picking the wrong one. First thing to try?",
+   o:["A larger model","Cut and sharpen the tool set","More few-shot examples of correct tool use","Raise the temperature"],a:1,
+   why:"Tool-selection accuracy degrades measurably as the tool count grows and descriptions start overlapping. Fewer, clearly distinct tools beats a big catalogue and a bigger model."}]},
+
+{band:2,n:"5",time:"Ongoing",tag:"Start in week 3",core:true,
+ title:"Evals, observability, reliability",
+ intro:"Most teams skip this. It is the difference between demos and production, and between \"the AI person\" and an AI engineer.",
+ analogies:["<b>You cannot write</b> <code>assertEquals</code> <b>against a non-deterministic system,</b> so you replace unit tests with statistical acceptance criteria. Evals are to AI what tests are to code — but graded, sampled, and always partly subjective."],
+ concepts:[
+  "<strong>Build the golden dataset first.</strong> 20–100 real inputs with known-good outputs, curated by hand. Boring. Essential. The highest-leverage artifact in any AI project.",
+  "<strong>Grading approaches:</strong> code assertions (cheapest, use wherever possible) → LLM-as-judge (flexible, needs its own validation) → human review (expensive, irreplaceable for calibration).",
+  "<strong>Error analysis over metrics.</strong> Read the failures. Categorize them by hand. The taxonomy is worth more than an aggregate score.",
+  "<strong>Tracing.</strong> Every call, tool call, token count, latency and cost, queryable. Langfuse (open source, self-hostable), LangSmith, Braintrust.",
+  "<strong>Regression suites in CI.</strong> Prompt change → eval run → block the merge if quality drops.",
+  "<strong>Cost and latency budgets.</strong> Per-request ceilings, caching strategy, model routing, KV-cache hit rate as a first-class metric for agents."],
+ res:[["◆","<b>Anthropic — \"Demystifying evals for AI agents.\"</b>"],
+      ["◆","<b>Hamel Husain's writing on evals</b> (\"Your AI Product Needs Evals\" and the field guides). The best free material anywhere on this."],
+      ["■","<b>\"AI Engineering\" — Chip Huyen,</b> the evaluation chapters."]],
+ steps:["Retrofit an eval onto your Phase 1 prompt using the 15 rows you already wrote.",
+        "Add tracing to the Phase 4 workflow. Every call, cost and latency, queryable.",
+        "Read 30 real failures. Categorize them by hand into 4–6 buckets. Write the taxonomy down.",
+        "Wire one eval into CI so a prompt change runs it.",
+        "Intentionally regress a prompt and confirm CI catches it. If it doesn't, the eval is decorative."],
+ gate:"You can answer \"did that change make it better?\" with a number and a linked trace, in under ten minutes.",
+ quiz:[
+  {q:"You're starting a new AI feature. What's the first artifact you create?",
+   o:["A tracing dashboard","A golden dataset of real inputs with acceptable outputs","An LLM-as-judge grader","A benchmark comparing three models"],a:1,
+   why:"Everything else grades against something. Without the dataset, the dashboard shows you activity and the judge grades against nothing in particular."},
+  {q:"Your LLM-as-judge reports 92% pass rate. What do you still need before trusting it?",
+   o:["Nothing — ship it","Evidence that the judge agrees with human labels on a sample","A bigger judge model","More test cases"],a:1,
+   why:"An unvalidated judge is a model grading a model. Calibrate it against human labels on a sample first, or you've automated your own confirmation bias."}]},
+
+{band:2,n:"6",time:"~3 weeks, then continuous",tag:"Engineering mandate",core:true,
+ title:"AI across the software lifecycle",
+ intro:"Your brief says AI will do more than PR submissions — PRDs, code review, and beyond. Here's the shape of that.",
+ sub:[
+  {h:"Spec-driven development",x:"<p>The most important shift for your team to understand. When agents write the code, <strong>the spec becomes the most leveraged thing a human can produce.</strong> A precise, versioned specification is the source of truth; code is a verifiable artifact generated against it.</p><p>Three maturity levels: <i>spec-first</i> (spec drives generation, you still maintain the code — where most teams live), <i>spec-anchored</i> (both evolve together), <i>spec-as-source</i> (only the spec is edited). Aim for spec-first, and be honest that the tooling is stronger on greenfield than on your existing PHP monolith.</p><p>The failure mode it fixes is <strong>intent drift</strong>: \"add login\" is wildly underspecified, the agent picks reasonable defaults, and the defaults aren't what you wanted. A wrong spec produces confidently wrong output across many files, and unwinding it costs far more than reviewing the spec would have.</p><p>Look at GitHub Spec Kit, Kiro, BMAD-METHOD, OpenSpec. Also just: a well-written <code>AGENTS.md</code> or <code>CLAUDE.md</code> in the repo, which is 80% of the value for 5% of the effort. Start there.</p>"},
+  {h:"AI code review",x:"<p><strong>Genuinely good at:</strong> convention enforcement, security smells, missing error handling, test coverage gaps, \"you changed X but not the three places that depend on it,\" and first-pass review so humans see cleaner PRs.</p><p><strong>Bad at:</strong> architectural judgment, knowing why the weird code is weird, product intent — and reviewing spec compliance when there's no spec.</p><p><strong>The trap is review noise.</strong> An AI reviewer that comments on everything gets muted within two sprints. Tune for precision over recall, hard, and measure comment-acceptance rate. Separate spec review (direction errors, before code exists) from implementation review (drift, after).</p>"},
+  {h:"PRDs and upstream work",x:"<p>Agents are good at expanding a rough intent into a structured PRD with acceptance criteria, and at critiquing a PRD for gaps and ambiguity. The critique case is the higher-value one — it's much safer to have AI find holes in a human's thinking than to have it invent the thinking.</p>"},
+  {h:"Measuring whether any of it works",x:"<p>Use DORA metrics — lead time, deploy frequency, change failure rate, MTTR — plus review latency and rework rate. Never lines of code or PRs merged: those go up while quality goes down, and you'll be held to them later. Expect a productivity dip during adoption and budget for it publicly, or it reads as failure.</p>"}],
+ steps:["Pick one repo. Capture a measurement baseline <i>before</i> you turn anything on.",
+        "Write <code>AGENTS.md</code>: conventions, architecture notes, what not to touch, how to run the tests.",
+        "Write a spec template and use it on the next feature, before any code.",
+        "Add an AI review step to CI, tuned for precision. Track comment-acceptance rate weekly.",
+        "After a month, compare against the baseline and publish the result honestly — including the dip."],
+ quiz:[
+  {q:"Your AI reviewer comments on every PR and the team has started muting it. The fix?",
+   o:["Switch to a better model","Tune for precision over recall and track comment-acceptance rate","Make its comments mandatory to resolve","Only run it on large PRs"],a:1,
+   why:"Trust is the scarce resource. A reviewer that is right 60% of the time gets ignored 100% of the time; one that speaks rarely and is usually right gets read."},
+  {q:"Which metric would you refuse to report as evidence of AI adoption working?",
+   o:["Change failure rate","Lead time for changes","Lines of code generated","Review latency"],a:2,
+   why:"It reliably goes up regardless of value, and once you report it you'll be held to it. Every AI productivity metric should be one you'd still want to move without AI."}]},
+
+{band:2,n:"7",time:"Continuous",tag:"The harder mandate",core:true,
+ title:"Enabling non-engineers",
+ intro:"The technology here is easier than Phase 4. The job is mostly organizational — and it's where teams with your exact brief usually succeed or fail.",
+ sub:[
+  {h:"The platform you'll actually build",x:"<ul><li><strong>A paved road.</strong> An approved LLM gateway with central auth, budget caps, logging and model routing, so nobody's pasting company data into a personal account. Shadow AI is the default state; a good paved road is the only real fix.</li><li><strong>Reusable building blocks:</strong> MCP servers for internal systems, a shared prompt library, pre-built n8n nodes for company APIs. Non-engineers should compose, not integrate.</li><li><strong>Templates over training.</strong> People don't want to learn prompting; they want the thing that already works for their job. Ship five excellent templates per department.</li><li><strong>Human-in-the-loop by default</strong> for anything that writes to a system of record or leaves the building.</li></ul>"},
+  {h:"Governance, on day one",x:"<p>Take this seriously early; retrofitting it is miserable.</p><ul><li>RBAC, SSO, secret management, audit logs, execution history. The platforms provide the primitives; someone has to configure and enforce them.</li><li>Data classification: what may and may not enter a model, per department. HR data, customer PII and source code each need their own answer.</li><li>An approval lifecycle for who can publish an automation touching production systems.</li><li>EU AI Act obligations if you operate in Europe — worth an hour with legal to understand which risk category your use cases fall into. Plus GDPR, and possibly ISO 27001, NIS2 or DORA by sector.</li></ul>"}],
+ caution:"A limit worth naming out loud: platform governance controls <b>automation authority</b> — who can run what, and it's logged. It does not verify that the data the workflow acted on was correct. That's still your problem.",
+ concepts:[
+  "Run office hours. Publish a pattern library. Celebrate the finance analyst who automated something, loudly.",
+  "Find the workflows where being 90% right is fine — drafting, triage, summarizing, first-pass classification. Avoid the ones where 90% is a disaster (financial, legal, irreversible) until you have evals and approval gates.",
+  "Expect the hardest problem to be adoption and trust, not capability."],
+ res:[["♪","<b>\"How I AI\"</b> (Claire Vo) — short, concrete episodes of people demoing real workflows. Good to forward to non-engineers."],
+      ["◆","<b>Vendor governance guides</b> — skim several; they converge on the same checklist."]],
+ steps:["Sit with one non-engineering team for an hour. Watch them work. Write down the three most repetitive things.",
+        "Pick the one where being 90% right is acceptable. Build it with them, not for them.",
+        "Put an approval gate and audit logging in before it goes live, not after.",
+        "Have them explain the automation back to you. If they can't, it's too clever.",
+        "Turn it into a template and publish it where the next person will find it."],
+ quiz:[
+  {q:"Marketing wants an automation that emails customers directly. Minimum control before it ships?",
+   o:["A disclaimer at the bottom of the email","A human approval gate before send","A lower-temperature model","Logging every generated draft"],a:1,
+   why:"Irreversible and outbound. Logging tells you what went wrong after it left the building; a gate stops it leaving."},
+  {q:"Your platform has RBAC, audit logs and full execution history. What does that NOT give you?",
+   o:["A record of who ran what","Assurance that the data the workflow acted on was correct","Credential isolation","An auditable trail"],a:1,
+   why:"Governance controls automation authority, not data correctness. A perfectly authorized workflow can confidently act on a stale metric."}]},
+
+{band:2,n:"8",time:"Read early, revisit always",tag:"Cannot skip",
+ title:"Security: prompt injection and the trifecta",
+ intro:"An LLM processes system instructions, user input and retrieved content as one undifferentiated token sequence. There is no privilege boundary. This remains OWASP's number one LLM risk and is unsolved at the architectural level — published defenses get bypassed by adaptive attacks.",
+ caution:"It looks like SQL injection, and the UK's NCSC has explicitly cautioned that <b>it isn't.</b> SQL injection has a real fix: parameterized queries separate code from data. There is no parameterized prompt. You cannot escape your way out — you have to design around it.",
+ sub:[{h:"The lethal trifecta",x:"<p>Simon Willison's framing. An agent is exploitable when it has all three of: access to private data, exposure to untrusted content, and the ability to communicate externally. Remove any one and the attack path breaks. This single frame explains nearly every real-world incident on record. Related: Meta's \"agents rule of two\" — no more than two of the three in any session without human approval.</p>"}],
+ lab:"trifecta",
+ concepts:[
+  "<strong>Least-privilege tool permissions.</strong> The agent gets a service account, scoped like a service account.",
+  "<strong>Human approval</strong> for irreversible or outbound actions.",
+  "<strong>Sandboxed execution</strong> — and assume the sandbox is weaker than you think. Real CVEs exist where allowlists <i>helped</i> the attacker, because the pre-approved commands were enough.",
+  "<strong>Output validation</strong> before anything reaches another system.",
+  "<strong>Supply chain hygiene.</strong> Agent frameworks, MCP servers and skill packages are a live attack surface."],
+ res:[["◆","<b>Simon Willison's blog.</b> The lethal trifecta post is required reading. <a href=\"https://simonwillison.net/2025/Jun/16/the-lethal-trifecta/\">simonwillison.net</a>"],
+      ["◆","<b>OWASP GenAI Security Project</b> — Top 10 for LLM Applications and for Agentic Applications. <a href=\"https://genai.owasp.org\">genai.owasp.org</a>"],
+      ["◆","<b>Anthropic's research on prompt injection defenses.</b>"]],
+ steps:["List every agent or automation already live in your company.",
+        "For each, mark which of the three trifecta properties it holds. Be honest — \"can render an image from a URL\" counts as external communication.",
+        "Anything holding all three: remove one property, or add a human gate.",
+        "Try to injection-test one of your own agents. Hide an instruction in a document it will read.",
+        "Write the finding up. This is how the trifecta becomes a team habit rather than a blog post you liked."],
+ gate:"You can look at any proposed agent architecture and name, in under a minute, which of the three properties it holds and what you'd remove.",
+ quiz:[
+  {q:"The most reliable mitigation for prompt injection today is…",
+   o:["Escaping untrusted input, the way you escape SQL","Removing one leg of the trifecta from the architecture","A stricter, more emphatic system prompt","A classifier that filters malicious inputs"],a:1,
+   why:"Filters and stern instructions raise the cost of an attack; they don't close it. Architecture does — an agent that cannot exfiltrate cannot be made to exfiltrate."},
+  {q:"You allowlist the shell commands your coding agent may run. This…",
+   o:["Solves sandbox escape","Helps, but has been observed to assist attackers when the allowlisted commands are enough to carry the payload","Is the equivalent of parameterized queries","Removes the need for approval gates"],a:1,
+   why:"Disclosed CVEs have turned allowlists into an accelerant: the attacker only needs the approved commands, and approval is already granted."}]}
+];
+
+/* ============ storage ============ */
+const KEY='ai-roadmap-v2';
+const Store=(()=>{const mem={};const hasW=typeof window!=='undefined'&&window.storage&&window.storage.get;
+ return{async get(k){if(hasW){try{const r=await window.storage.get(k);if(r&&r.value)return r.value;}catch(e){}}
+   try{const v=localStorage.getItem(k);if(v)return v;}catch(e){} return mem[k]||null;},
+  async set(k,v){if(hasW){try{await window.storage.set(k,v);return;}catch(e){}}
+   try{localStorage.setItem(k,v);return;}catch(e){} mem[k]=v;}};})();
+let S={chk:{},quiz:{},notes:{}};
+let saveTimer=null;
+function save(){clearTimeout(saveTimer);saveTimer=setTimeout(()=>Store.set(KEY,JSON.stringify(S)),250);}
+
+/* ============ render ============ */
+function phaseBody(p,i){
+  let h='';
+  if(p.intro)h+=`<p data-kind="theory">${p.intro}</p>`;
+  (p.analogies||[]).forEach(a=>h+=`<div class="analogy" data-kind="theory">${a}</div>`);
+  if(p.caution)h+=`<div class="caution" data-kind="theory">${p.caution}</div>`;
+  if(p.table){h+=`<h4 class="sec" data-kind="theory">Patterns</h4><div class="scroll" data-kind="theory"><table class="tbl"><thead><tr>${p.table.h.map(x=>`<th>${x}</th>`).join('')}</tr></thead><tbody>${p.table.r.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;}
+  if(p.concepts)h+=`<h4 class="sec" data-kind="theory">What to learn</h4><ul data-kind="theory">${p.concepts.map(c=>`<li>${c}</li>`).join('')}</ul>`;
+  (p.sub||[]).forEach(s=>h+=`<h4 class="sec" data-kind="theory">${s.h}</h4><div data-kind="theory">${s.x}</div>`);
+  if(p.extra)h+=`<h4 class="sec" data-kind="theory">${p.extra.t}</h4><div data-kind="theory">${p.extra.h}</div>`;
+  if(p.res)h+=`<h4 class="sec" data-kind="theory">Resources</h4><ul class="res" data-kind="theory">${p.res.map(r=>`<li><span class="ico">${r[0]}</span><span>${r[1]}</span></li>`).join('')}</ul>`;
+  if(p.quiz){h+=`<h4 class="sec" data-kind="theory">Check yourself</h4>`;
+    p.quiz.forEach((q,qi)=>{h+=`<div class="quiz" data-kind="theory" data-q="${i}-${qi}"><div class="q">${q.q}</div><div class="opts">${q.o.map((o,oi)=>`<button class="opt" data-o="${oi}">${o}</button>`).join('')}</div><div class="why">${q.why}</div></div>`;});}
+  if(p.lab)h+=`<h4 class="sec practice" data-kind="practice">Lab</h4><div class="lab" data-kind="practice" data-lab="${p.lab}"></div>`;
+  if(p.steps)h+=`<h4 class="sec practice" data-kind="practice">Build this</h4><ol class="steps" data-kind="practice">${p.steps.map(s=>`<li>${s}</li>`).join('')}</ol>`;
+  if(p.gate)h+=`<div class="gate" data-kind="practice"><span class="mark">✓</span><span><strong>You know it when:</strong> ${p.gate}</span></div>`;
+  h+=`<div class="checks"><label class="chk" data-key="s${i}"><input type="checkbox"><span class="box">✓</span>Studied</label><label class="chk" data-key="b${i}"><input type="checkbox"><span class="box">✓</span>Shipped the build</label></div>`;
+  h+=`<div class="notes" style="margin-top:12px"><textarea data-note="${i}" placeholder="Notes — what you tried, what broke, what surprised you"></textarea></div>`;
+  return h;
+}
+
+function mount(){
+  ['band1','band2'].forEach((id,bi)=>{
+    document.getElementById(id).innerHTML=PHASES.filter(p=>p.band===bi+1).map(p=>{
+      const i=PHASES.indexOf(p);
+      const tag=p.tag?`<span class="tag${p.core?' core':''}">${p.tag}</span>`:'';
+      return `<article class="phase" data-i="${i}"><span class="node">${p.n}</span><div class="card">
+        <button class="head" aria-expanded="false"><div class="meta"><span>Phase ${p.n} · ${p.time}</span>${tag}</div>
+        <div class="title-row"><span class="title">${p.title}</span><span class="chev">▾</span></div></button>
+        <div class="body">${phaseBody(p,i)}</div></div></article>`;}).join('');
+  });
+
+  document.querySelectorAll('.phase').forEach(ph=>{
+    const b=ph.querySelector('.head');
+    b.addEventListener('click',()=>{const o=ph.classList.toggle('expanded');b.setAttribute('aria-expanded',o?'true':'false');});
+  });
+  document.querySelectorAll('.chk').forEach(l=>l.querySelector('input').addEventListener('change',e=>{
+    l.classList.toggle('on',e.target.checked);S.chk[l.dataset.key]=e.target.checked;paint();save();}));
+  document.querySelectorAll('.quiz').forEach(qb=>{
+    const [pi,qi]=qb.dataset.q.split('-').map(Number);
+    qb.querySelectorAll('.opt').forEach(btn=>btn.addEventListener('click',()=>{
+      if(S.quiz[qb.dataset.q]!==undefined)return;
+      S.quiz[qb.dataset.q]=Number(btn.dataset.o);markQuiz(qb,pi,qi);paint();save();}));
+  });
+  document.querySelectorAll('textarea[data-note]').forEach(t=>t.addEventListener('input',()=>{
+    S.notes[t.dataset.note]=t.value;save();}));
+  document.querySelectorAll('.lab').forEach(el=>LABS[el.dataset.lab](el));
+}
+
+function markQuiz(qb,pi,qi){
+  const correct=PHASES[pi].quiz[qi].a, chosen=S.quiz[qb.dataset.q];
+  qb.querySelectorAll('.opt').forEach((b,oi)=>{b.disabled=true;
+    if(oi===correct)b.classList.add('right');
+    else if(oi===chosen)b.classList.add('wrong');});
+  qb.querySelector('.why').classList.add('show');
+}
+
+/* ============ progress ============ */
+function paint(){
+  const chks=document.querySelectorAll('.chk').length;
+  const qs=document.querySelectorAll('.quiz').length;
+  const total=chks+qs;
+  const done=Object.values(S.chk).filter(Boolean).length+Object.keys(S.quiz).length;
+  document.getElementById('fill').style.width=total?(done/total*100)+'%':'0%';
+  document.getElementById('tally').textContent=done+' / '+total;
+  document.querySelectorAll('.phase').forEach(ph=>{const i=ph.dataset.i;
+    ph.classList.toggle('done',!!(S.chk['s'+i]&&S.chk['b'+i]));});
+}
+
+async function load(){
+  const raw=await Store.get(KEY);
+  if(raw){try{const p=JSON.parse(raw);S={chk:p.chk||{},quiz:p.quiz||{},notes:p.notes||{}};}catch(e){}}
+  Object.keys(S.chk).forEach(k=>{const l=document.querySelector(`.chk[data-key="${k}"]`);
+    if(l&&S.chk[k]){l.classList.add('on');l.querySelector('input').checked=true;}});
+  Object.keys(S.quiz).forEach(k=>{const qb=document.querySelector(`.quiz[data-q="${k}"]`);
+    if(qb){const [pi,qi]=k.split('-').map(Number);markQuiz(qb,pi,qi);}});
+  Object.keys(S.notes).forEach(k=>{const t=document.querySelector(`textarea[data-note="${k}"]`);
+    if(t)t.value=S.notes[k];});
+  paint();
+}
+
+/* ============ labs ============ */
+const LABS={
+sampling(el){
+  const cand=[["connection",3.4],["was",2.9],["server",2.2],["had",1.7],["credentials",1.1]];
+  el.innerHTML=`<h5>LAB · Temperature and sampling</h5>
+   <p class="desc">The model is completing: <code>The deploy failed because the database…</code> — these are its five candidates. Move the dial and watch the distribution flatten. Then sample.</p>
+   <label>Temperature <b id="tv">0.8</b></label>
+   <input type="range" min="0" max="150" value="80" id="tr">
+   <div id="bars" style="margin:14px 0"></div>
+   <div class="row"><button class="btn" id="go">Sample 30 times</button><button class="btn ghost" id="clr">Clear</button></div>
+   <div class="out" id="o">Set a temperature, then sample.</div>`;
+  const bars=el.querySelector('#bars'),out=el.querySelector('#o'),tr=el.querySelector('#tr'),tv=el.querySelector('#tv');
+  function probs(T){
+    if(T<=0.01){return cand.map((c,i)=>i===0?1:0);}
+    const ex=cand.map(c=>Math.exp(c[1]/T));const s=ex.reduce((a,b)=>a+b,0);return ex.map(e=>e/s);}
+  function draw(){
+    const T=Number(tr.value)/100;tv.textContent=T.toFixed(2);
+    const p=probs(T);
+    bars.innerHTML=cand.map((c,i)=>`<div class="tokbar"><span class="w">${c[0]}</span><span class="t"><i style="width:${(p[i]*100).toFixed(1)}%"></i></span><span class="p">${(p[i]*100).toFixed(1)}%</span></div>`).join('');
+  }
+  tr.addEventListener('input',draw);draw();
+  el.querySelector('#clr').addEventListener('click',()=>out.textContent='Set a temperature, then sample.');
+  el.querySelector('#go').addEventListener('click',()=>{
+    const T=Number(tr.value)/100,p=probs(T),counts=cand.map(()=>0);
+    for(let n=0;n<30;n++){let r=Math.random(),acc=0,pick=0;
+      for(let i=0;i<p.length;i++){acc+=p[i];if(r<=acc){pick=i;break;}}counts[pick]++;}
+    const uniq=counts.filter(c=>c>0).length;
+    out.innerHTML=counts.map((c,i)=>`${cand[i][0]}: ${'█'.repeat(c)||'·'} ${c}`).join('<br>')+
+      `<br><br>${uniq} distinct completion${uniq===1?'':'s'} from an identical prompt.`;
+  });
+},
+
+retrieval(el){
+  const corpus=[
+   {t:"Refund policy: customers may request a full refund within 30 days of purchase.",k:["refund","policy","customer","30","days","purchase","full"]},
+   {t:"Error E-4471 indicates the payment processor rejected the card token. Retry with a fresh token.",k:["error","e-4471","payment","processor","rejected","card","token","retry"]},
+   {t:"To reset a password, use the Forgot Password link. Reset emails expire after one hour.",k:["reset","password","forgot","link","email","expire","hour"]},
+   {t:"Getting your money back: open a ticket in the billing queue and quote the order number.",k:["money","back","ticket","billing","queue","order","number"]},
+   {t:"Deployment runbook: drain the queue, migrate, then roll the workers one at a time.",k:["deployment","runbook","drain","queue","migrate","roll","workers"]},
+   {t:"Account lockout occurs after five failed sign-in attempts and clears after 15 minutes.",k:["account","lockout","failed","sign-in","attempts","clears","minutes"]},
+   {t:"Cancelling a subscription stops future charges but does not refund the current period.",k:["cancel","subscription","charges","refund","current","period"]},
+   {t:"Card declined codes are logged in the payments table under decline_reason.",k:["card","declined","codes","logged","payments","table","decline_reason"]}];
+  const syn={refund:["money","back","reimburse","cancel","charges","billing"],money:["refund","reimburse","billing","charges"],back:["refund"],
+   password:["sign-in","lockout","account","reset","forgot"],login:["password","sign-in","account","lockout"],log:["password","sign-in","account","lockout","reset"],
+   payment:["card","billing","charges","declined"],card:["payment","declined","token"],
+   cancel:["subscription","refund","charges"],deploy:["deployment","runbook","workers"]};
+  const STOP=new Set(["how","do","i","the","a","an","to","my","me","is","it","can","t","of","for","get","in","on","and"]);
+  const isIdent=t=>/\d/.test(t)||t.includes("-")||t.includes("_");
+  el.innerHTML=`<h5>LAB · Why hybrid search wins</h5>
+   <p class="desc">Eight support chunks. Same query, three retrieval strategies. Watch what pure semantics misses — and what pure keywords miss.</p>
+   <label>Query</label><input type="text" id="q" value="how do I get my money back">
+   <div class="row" style="margin:10px 0"><button class="pill" data-p="how do I get my money back">refund, worded differently</button><button class="pill" data-p="E-4471">E-4471</button><button class="pill" data-p="I can't log in">I can't log in</button></div>
+   <div class="row" id="modes"><button class="pill" data-m="kw" aria-pressed="false">Keyword only</button><button class="pill" data-m="sem" aria-pressed="true">Semantic only</button><button class="pill" data-m="hy" aria-pressed="false">Hybrid</button></div>
+   <div id="r"></div><div class="verdict" id="v"></div>`;
+  let mode='sem';
+  const q=el.querySelector('#q'),r=el.querySelector('#r'),v=el.querySelector('#v');
+  const tok=s=>(s.toLowerCase().match(/[a-z0-9_\-]+/g)||[]).filter(t=>!STOP.has(t));
+  function kwScore(d,terms){let s=0;terms.forEach(t=>{if(d.k.includes(t))s+=1;});return s;}
+  function semScore(d,terms){let s=0;terms.forEach(t=>{
+    if(isIdent(t))return;                       // identifiers carry no meaning to embed
+    if(d.k.includes(t))s+=0.5;
+    (syn[t]||[]).forEach(x=>{if(d.k.includes(x))s+=0.6;});});return s;}
+  function run(){
+    const terms=tok(q.value);
+    const hits=corpus.map(d=>{
+      const kw=kwScore(d,terms),sem=semScore(d,terms);
+      return {d,s:mode==='kw'?kw:mode==='sem'?sem:kw+sem};})
+      .filter(h=>h.s>0).sort((a,b)=>b.s-a.s).slice(0,3);
+    r.innerHTML=hits.length?hits.map(h=>`<div class="hit"><span class="sc">${h.s.toFixed(2)}</span>${h.d.t}</div>`).join(''):`<div class="hit">Nothing retrieved.</div>`;
+    const ident=terms.some(isIdent);
+    let msg,cls='';
+    if(ident&&mode==='sem'){msg="A rare literal string has almost no meaning to embed, so meaning-space search can't reach it. This is the canonical case for keyword or hybrid.";cls=' bad';}
+    else if(!hits.length){msg="Nothing retrieved. In production this is the point where your user gives up and files a ticket.";cls=' bad';}
+    else if(mode==='kw'&&!ident){msg="Keyword matching only finds documents that reuse the user's exact words. Real users rarely do.";}
+    else if(mode==='hy'){msg="Hybrid covers both failure modes at once. It's the cheapest quality win available in most RAG systems.";cls=' good';}
+    else if(mode==='kw'){msg="Exact matching is unbeatable on identifiers. Keep it — don't replace it with embeddings.";cls=' good';}
+    else{msg="Semantic search bridges different wording for the same idea — and misses identifiers entirely.";}
+    v.innerHTML=msg;v.className='verdict'+cls;
+  }
+  el.querySelectorAll('.pill[data-p]').forEach(b=>b.addEventListener('click',()=>{q.value=b.dataset.p;run();}));
+  el.querySelectorAll('#modes .pill').forEach(b=>b.addEventListener('click',()=>{
+    mode=b.dataset.m;el.querySelectorAll('#modes .pill').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));run();}));
+  q.addEventListener('input',run);run();
+},
+
+decide(el){
+  const qs=[
+   ["Do you already know the sequence of steps?","workflow"],
+   ["Does the number of steps vary a lot by input?","agent"],
+   ["Must it be auditable and reproducible run-to-run?","workflow"],
+   ["Does it need to explore and backtrack to find the answer?","agent"],
+   ["Will a non-engineer need to read and modify it?","workflow"],
+   ["Is a wrong action expensive or irreversible?","workflow"]];
+  el.innerHTML=`<h5>LAB · Workflow or agent?</h5>
+   <p class="desc">Answer for a task you're actually considering. Then argue with the result — the reasoning matters more than the verdict.</p>
+   <div id="qs">${qs.map((x,i)=>`<label class="tog"><input type="checkbox" data-i="${i}"><span>${x[0]}</span></label>`).join('')}</div>
+   <div class="verdict" id="v">Nothing selected yet.</div>`;
+  const v=el.querySelector('#v');
+  function run(){
+    let w=0,a=0;
+    el.querySelectorAll('input[data-i]').forEach(c=>{if(c.checked){qs[c.dataset.i][1]==='workflow'?w++:a++;}});
+    if(!w&&!a){v.textContent="Nothing selected yet.";v.className='verdict';return;}
+    if(a===0){v.innerHTML="<b>Workflow.</b> You know the path — write it in code. Deterministic control flow, LLM calls at the steps that need judgment.";v.className='verdict good';}
+    else if(a>w){v.innerHTML="<b>Agent — with gates.</b> The path genuinely varies. Add a turn limit, checkpointing, and human approval on anything irreversible.";v.className='verdict';}
+    else{v.innerHTML="<b>Workflow with an agentic step.</b> Keep the overall control flow in your code and give autonomy to the one sub-task that needs it. This is where most real systems land.";v.className='verdict good';}
+  }
+  el.querySelectorAll('input[data-i]').forEach(c=>c.addEventListener('change',run));
+},
+
+trifecta(el){
+  const legs=[["Reads private data","internal docs, email, your database, source code"],
+    ["Sees untrusted content","web pages, inbound email, user uploads, third-party API responses, dependencies"],
+    ["Can communicate externally","sends mail, calls webhooks, posts messages — or just renders an image from a URL"]];
+  el.innerHTML=`<h5>LAB · Trifecta auditor</h5>
+   <p class="desc">Describe an agent you're building — or one already live in your company. Be honest about the third one; it catches people out.</p>
+   ${legs.map((l,i)=>`<label class="tog"><input type="checkbox" data-l="${i}"><span><b>${l[0]}</b><br><span style="color:#5A6B85;font-size:13px">${l[1]}</span></span></label>`).join('')}
+   <div class="verdict" id="v">Nothing selected — nothing to exploit.</div>`;
+  const v=el.querySelector('#v');
+  el.querySelectorAll('input[data-l]').forEach(c=>c.addEventListener('change',()=>{
+    const on=[...el.querySelectorAll('input[data-l]')].map(x=>x.checked);
+    const n=on.filter(Boolean).length;
+    if(n===3){v.innerHTML="<b>Exploitable.</b> A single injected instruction in the untrusted content can read the private data and send it out. Remove one leg, or put a human in front of the outbound action. No prompt wording fixes this.";v.className='verdict bad';}
+    else if(n===2){v.innerHTML="<b>Two of three.</b> This is the practical ceiling for an unattended session. Keep it here deliberately — and re-audit whenever someone adds a tool.";v.className='verdict';}
+    else if(n===1){v.innerHTML="<b>One leg.</b> No injection path to speak of. Most useful agents won't stay this simple, so record why it's safe now.";v.className='verdict good';}
+    else{v.textContent="Nothing selected — nothing to exploit.";v.className='verdict';}
+  }));
+}};
+
+/* ============ view filter ============ */
+document.getElementById('seg').addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;
+  document.querySelectorAll('#seg button').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));
+  document.body.className=b.dataset.view==='all'?'':'only-'+b.dataset.view;
+});
+document.getElementById('reset').addEventListener('click',()=>{
+  if(!confirm('Clear all progress, quiz answers and notes?'))return;
+  S={chk:{},quiz:{},notes:{}};save();location.reload();
+});
+
+mount();
+document.querySelector('.phase').classList.add('expanded');
+document.querySelector('.phase .head').setAttribute('aria-expanded','true');
+load();
+</script>
+</body>
+</html>
